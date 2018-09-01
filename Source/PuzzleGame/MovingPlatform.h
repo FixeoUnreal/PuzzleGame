@@ -6,6 +6,8 @@
 #include "Engine/StaticMeshActor.h"
 #include "MovingPlatform.generated.h"
 
+class ATargetPoint;
+
 /**
  * 
  */
@@ -14,7 +16,28 @@ class PUZZLEGAME_API AMovingPlatform : public AStaticMeshActor
 {
 	GENERATED_BODY()
 	
+public:
+	AMovingPlatform();
 	
-	
+protected:
+	virtual void Tick(float DeltaSeconds) override;
+
+	virtual void BeginPlay() override;
+
+protected:
+	FVector PointA;
+
+	FVector PointB;
+
+	UPROPERTY(EditAnywhere, Category = "Moving Platform")
+	FVector RelativeDestination;
+
+	// Moving speed in cm/s
+	UPROPERTY(EditAnywhere, Category = "Moving Platform")
+	float Speed;
+
+	bool bInBDirection;
+
+	void MoveBetweenAB(float DeltaSeconds);
 	
 };

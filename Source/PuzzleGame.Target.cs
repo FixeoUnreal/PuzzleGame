@@ -9,5 +9,11 @@ public class PuzzleGameTarget : TargetRules
 	{
 		Type = TargetType.Game;
 		ExtraModuleNames.Add("PuzzleGame");
-	}
+
+        //Non-Unity-mode
+        bUseUnityBuild = false;
+
+        //New standard
+        bUsePCHFiles = false;
+    }
 }
