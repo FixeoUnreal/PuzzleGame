@@ -13,7 +13,7 @@ AMovingPlatform::AMovingPlatform()
 
 	Speed = 5.f;
 	bInBDirection = true;
-	RelativeDestination = FVector(500,0,0);
+	RelativeDestination = FVector(500, 0, 0);
 }
 
 void AMovingPlatform::Tick(float DeltaSeconds)
@@ -24,7 +24,7 @@ void AMovingPlatform::Tick(float DeltaSeconds)
 	{
 		MoveBetweenAB(DeltaSeconds);
 	}
-	
+
 
 }
 
@@ -33,6 +33,12 @@ void AMovingPlatform::BeginPlay()
 	Super::BeginPlay();
 	PointA = GetActorLocation();
 	PointB = GetActorLocation() + RelativeDestination;
+
+	if (HasAuthority())
+	{
+		SetReplicates(true);
+		SetReplicateMovement(true);
+	}
 }
 
 void AMovingPlatform::MoveBetweenAB(float DeltaSeconds)
