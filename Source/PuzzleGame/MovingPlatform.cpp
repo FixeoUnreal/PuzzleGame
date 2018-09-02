@@ -13,7 +13,6 @@ AMovingPlatform::AMovingPlatform()
 
 	Speed = 5.f;
 	bInBDirection = true;
-	RelativeDestination = FVector(500, 0, 0);
 }
 
 void AMovingPlatform::Tick(float DeltaSeconds)
@@ -22,7 +21,7 @@ void AMovingPlatform::Tick(float DeltaSeconds)
 
 	if (HasAuthority())
 	{
-		MoveBetweenAB(DeltaSeconds);
+		MoveBackAndForth(DeltaSeconds);
 	}
 
 
@@ -31,8 +30,9 @@ void AMovingPlatform::Tick(float DeltaSeconds)
 void AMovingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
-	PointA = GetActorLocation();
-	PointB = GetActorLocation() + RelativeDestination;
+
+	StartWorldLocation = GetActorLocation();
+	TargetWorldLocation = StartWorldLocation + RelativeDestination;
 
 	if (HasAuthority())
 	{
@@ -41,29 +41,18 @@ void AMovingPlatform::BeginPlay()
 	}
 }
 
-void AMovingPlatform::MoveBetweenAB(float DeltaSeconds)
+void AMovingPlatform::MoveBackAndForth(float DeltaSeconds)
 {
-	FVector ToBVelocity = ((PointB - PointA) / (PointB - PointA).Size()) * DeltaSeconds * Speed;
-	if (bInBDirection)
+	FVector ToTargetVelocityPerFrame = (TargetWorldLocation - StartWorldLocation).GetSafeNormal() * Speed * DeltaSeconds;
+
+	if ((GetActorLocation() - StartWorldLocation).Size() < (TargetWorldLocation - StartWorldLocation).Size())
 	{
-		if ((GetActorLocation() - PointB).Size() > 50)
-		{
-			SetActorLocation(GetActorLocation() + ToBVelocity);
-		}
-		else
-		{
-			bInBDirection = false;
-		}
+		SetActorLocation(GetActorLocation() + ToTargetVelocityPerFrame);
 	}
 	else
-	{
-		if ((GetActorLocation() - PointA).Size() > 50)
-		{
-			SetActorLocation(GetActorLocation() - ToBVelocity);
-		}
-		else
-		{
-			bInBDirection = true;
-		}
+	{	
+		FVector TempVector = TargetWorldLocation;
+		TargetWorldLocation = StartWorldLocation;
+		StartWorldLocation = TempVector;
 	}
 }

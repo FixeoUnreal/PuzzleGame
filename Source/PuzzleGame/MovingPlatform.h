@@ -25,11 +25,7 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
-	FVector PointA;
-
-	FVector PointB;
-
-	UPROPERTY(EditAnywhere, Category = "Moving Platform")
+	UPROPERTY(EditAnywhere, Category = "Moving Platform", meta = (MakeEditWidget = true))
 	FVector RelativeDestination;
 
 	// Moving speed in cm/s
@@ -38,6 +34,10 @@ protected:
 
 	bool bInBDirection;
 
-	void MoveBetweenAB(float DeltaSeconds);
-	
+	void MoveBackAndForth(float DeltaSeconds);
+
+private:
+	FVector StartWorldLocation;
+
+	FVector TargetWorldLocation;
 };
