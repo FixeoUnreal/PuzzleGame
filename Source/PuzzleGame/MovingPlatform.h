@@ -18,6 +18,10 @@ class PUZZLEGAME_API AMovingPlatform : public AStaticMeshActor
 	
 public:
 	AMovingPlatform();
+
+	void AddActiveTrigger();
+
+	void RemoveActiveTrigger();
 	
 protected:
 	virtual void Tick(float DeltaSeconds) override;
@@ -40,4 +44,10 @@ private:
 	FVector StartWorldLocation;
 
 	FVector TargetWorldLocation;
+
+	// Only move when greater than 0
+	UPROPERTY(EditAnywhere, Category = "Moving Platform")
+	uint32 ActiveTriggersNr = 1;
+
+	
 };

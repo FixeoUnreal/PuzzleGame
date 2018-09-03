@@ -15,11 +15,22 @@ AMovingPlatform::AMovingPlatform()
 	bInBDirection = true;
 }
 
+void AMovingPlatform::AddActiveTrigger()
+{
+	ActiveTriggersNr++;
+}
+
+void AMovingPlatform::RemoveActiveTrigger()
+{
+	if(ActiveTriggersNr <= 0){ return; }
+	ActiveTriggersNr--;
+}
+
 void AMovingPlatform::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (HasAuthority())
+	if (HasAuthority() && ActiveTriggersNr > 0)
 	{
 		MoveBackAndForth(DeltaSeconds);
 	}

@@ -7,6 +7,7 @@
 #include "PlatformTrigger.generated.h"
 
 class UBoxComponent;
+class AMovingPlatform;
 
 UCLASS()
 class PUZZLEGAME_API APlatformTrigger : public AActor
@@ -34,6 +35,9 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UBoxComponent* TriggerVolume;
+
+	UPROPERTY(EditAnywhere, Category = "Moving Platform")
+	TArray<AMovingPlatform*> PlatformsToTrigger;
 
 	
 };
