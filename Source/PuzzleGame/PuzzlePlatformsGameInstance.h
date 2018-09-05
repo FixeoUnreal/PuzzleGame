@@ -27,6 +27,9 @@ public:
 	UFUNCTION(Exec)
 	void Join(const FString Address);
 
+	UFUNCTION(BlueprintCallable, Category = "PPGameInstance")
+	void LoadMenu();
+
 private:
 	TSubclassOf<UUserWidget> MenuClass;
 

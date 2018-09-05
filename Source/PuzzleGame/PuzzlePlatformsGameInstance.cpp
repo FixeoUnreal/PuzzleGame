@@ -52,3 +52,12 @@ void UPuzzlePlatformsGameInstance::Join(const FString Address)
 
 	PC->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 }
+
+void UPuzzlePlatformsGameInstance::LoadMenu()
+{
+	if(!ensure(MenuClass)){ return; }
+	UUserWidget* Menu = CreateWidget<UUserWidget>(this, MenuClass);
+	if(!ensure(Menu)){ return; }
+
+	Menu->AddToViewport();
+}
