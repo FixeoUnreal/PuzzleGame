@@ -6,6 +6,7 @@
 #include <ConstructorHelpers.h>
 #include "PlatformTrigger.h"
 #include "Blueprint/UserWidget.h"
+#include "MenuSystem/MainMenu.h"
 
 
 
@@ -38,6 +39,7 @@ void UPuzzlePlatformsGameInstance::Host()
 	if(!ensure(World)){ return; }
 	
 	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+	ExitMenu();
 }
 
 void UPuzzlePlatformsGameInstance::Join(const FString Address)
@@ -51,12 +53,13 @@ void UPuzzlePlatformsGameInstance::Join(const FString Address)
 	if(!ensure(PC)){ return; }
 
 	PC->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
+	ExitMenu();
 }
 
 void UPuzzlePlatformsGameInstance::LoadMenu()
 {
 	if(!ensure(MenuClass)){ return; }
-	UUserWidget* Menu = CreateWidget<UUserWidget>(this, MenuClass);
+	UMainMenu* Menu = CreateWidget<UMainMenu>(this, MenuClass);
 	if(!ensure(Menu)){ return; }
 
 	Menu->AddToViewport();
@@ -70,4 +73,17 @@ void UPuzzlePlatformsGameInstance::LoadMenu()
 
 	PC->SetInputMode(InputModeUI);
 	PC->bShowMouseCursor = true;
+
+	Menu->SetMenuInterface(this);
+}
+
+void UPuzzlePlatformsGameInstance::ExitMenu()
+{
+	FInputModeGameOnly InputModeGameOnly;
+
+	APlayerController* PC = GetFirstLocalPlayerController();
+	if (!ensure(PC)) { return; }
+
+	PC->SetInputMode(InputModeGameOnly);
+	PC->bShowMouseCursor = false;
 }

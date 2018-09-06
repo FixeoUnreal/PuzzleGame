@@ -7,6 +7,7 @@
 #include "MainMenu.generated.h"
 
 class UButton;
+class IMenuInterface;
 
 /**
  * 
@@ -15,6 +16,9 @@ UCLASS()
 class PUZZLEGAME_API UMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	void SetMenuInterface(IMenuInterface* MenuInterface);
 	
 protected:
 	UPROPERTY(meta = (BindWidget))
@@ -22,6 +26,8 @@ protected:
 	
 	UPROPERTY(meta = (BindWidget))
 	UButton* BtnJoin;
+
+	IMenuInterface* MenuInterface;
 
 protected:
 	virtual bool Initialize() override;

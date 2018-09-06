@@ -2,8 +2,15 @@
 
 #include "MainMenu.h"
 #include "Components/Button.h"
+#include "MenuInterface.h"
 
 
+
+void UMainMenu::SetMenuInterface(IMenuInterface* MenuInterface)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Set interface called"));
+	this->MenuInterface = MenuInterface;
+}
 
 bool UMainMenu::Initialize()
 {
@@ -14,6 +21,7 @@ bool UMainMenu::Initialize()
 	BtnHost->OnClicked.AddDynamic(this, &UMainMenu::HostClicked);
 	if (!ensure(BtnJoin)) { return false; }
 	BtnJoin->OnClicked.AddDynamic(this, &UMainMenu::JoinClicked);
+
 	UE_LOG(LogTemp, Warning, TEXT("Initilize called"));
 	return true;
 }
@@ -21,9 +29,18 @@ bool UMainMenu::Initialize()
 void UMainMenu::HostClicked()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Host clicked"));
+	if (MenuInterface)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("yeah interface"));
+		MenuInterface->Host();
+	}
 }
 
 void UMainMenu::JoinClicked()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Join clicked"));
+	/*if (MenuInterface)
+	{
+		MenuInterface->Join();
+	}*/
 }

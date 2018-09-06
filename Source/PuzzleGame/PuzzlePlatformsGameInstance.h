@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "MenuSystem/MenuInterface.h"
 #include "PuzzlePlatformsGameInstance.generated.h"
 
 class UUserWidget;
@@ -12,7 +13,7 @@ class UUserWidget;
  * 
  */
 UCLASS()
-class PUZZLEGAME_API UPuzzlePlatformsGameInstance : public UGameInstance
+class PUZZLEGAME_API UPuzzlePlatformsGameInstance : public UGameInstance, public IMenuInterface
 {
 	GENERATED_BODY()
 	
@@ -22,15 +23,18 @@ public:
 	virtual void Init() override;
 
 	UFUNCTION(Exec)
-	void Host();
+	virtual void Host() override;
 
 	UFUNCTION(Exec)
-	void Join(const FString Address);
+	virtual void Join(const FString Address) override;
 
 	UFUNCTION(BlueprintCallable, Category = "PPGameInstance")
 	void LoadMenu();
 
 private:
 	TSubclassOf<UUserWidget> MenuClass;
+
+private:
+	void ExitMenu();
 
 };
