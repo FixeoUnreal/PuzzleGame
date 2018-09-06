@@ -22,4 +22,13 @@ protected:
 	
 	UPROPERTY(meta = (BindWidget))
 	UButton* BtnJoin;
+
+protected:
+	virtual bool Initialize() override;
+
+	UFUNCTION()
+	void HostClicked();
+
+	UFUNCTION()
+	void JoinClicked();
 };
