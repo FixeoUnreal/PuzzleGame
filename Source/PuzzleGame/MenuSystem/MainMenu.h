@@ -8,6 +8,8 @@
 
 class UButton;
 class IMenuInterface;
+class ULevel;
+class UWorld;
 
 /**
  * 
@@ -19,6 +21,10 @@ class PUZZLEGAME_API UMainMenu : public UUserWidget
 
 public:
 	void SetMenuInterface(IMenuInterface* MenuInterface);
+
+	void Setup();
+
+	virtual void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) override;
 	
 protected:
 	UPROPERTY(meta = (BindWidget))

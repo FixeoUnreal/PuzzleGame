@@ -34,7 +34,4 @@ public:
 private:
 	TSubclassOf<UUserWidget> MenuClass;
 
-private:
-	void ExitMenu();
-
 };
