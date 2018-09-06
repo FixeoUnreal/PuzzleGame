@@ -10,6 +10,9 @@ class UButton;
 class IMenuInterface;
 class ULevel;
 class UWorld;
+class UWidgetSwitcher;
+class UEditableTextBox;
+class UInputComponent;
 
 /**
  * 
@@ -33,6 +36,15 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UButton* BtnJoin;
 
+	UPROPERTY(meta = (BindWidget))
+	UButton* BtnJoinWithAddr;
+
+	UPROPERTY(meta = (BindWidget))
+	UWidgetSwitcher* MenuWidgetSwitcher;
+
+	UPROPERTY(meta = (BindWidget))
+	UEditableTextBox* IPAddressTextBox;
+
 	IMenuInterface* MenuInterface;
 
 protected:
@@ -42,5 +54,8 @@ protected:
 	void HostClicked();
 
 	UFUNCTION()
-	void JoinClicked();
+	void JoinClickedMain();
+
+	UFUNCTION()
+	void JoinClickedWithAddress();
 };
