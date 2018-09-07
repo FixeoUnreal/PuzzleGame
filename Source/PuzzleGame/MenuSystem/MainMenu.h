@@ -40,7 +40,16 @@ protected:
 	UButton* BtnJoinWithAddr;
 
 	UPROPERTY(meta = (BindWidget))
+	UButton* BtnBack;
+	
+	UPROPERTY(meta = (BindWidget))
 	UWidgetSwitcher* MenuWidgetSwitcher;
+
+	UPROPERTY(meta = (BindWidget))
+	UWidget* JoinMenu;
+
+	UPROPERTY(meta = (BindWidget))
+	UWidget* MainMenu;
 
 	UPROPERTY(meta = (BindWidget))
 	UEditableTextBox* IPAddressTextBox;
@@ -54,8 +63,11 @@ protected:
 	void HostClicked();
 
 	UFUNCTION()
-	void JoinClickedMain();
+	void OpenJoinMenu();
 
 	UFUNCTION()
 	void JoinClickedWithAddress();
+
+	UFUNCTION()
+	void BackToMainMenu();
 };

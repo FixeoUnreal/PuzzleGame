@@ -7,10 +7,6 @@
 #include <EditableTextBox.h>
 #include <Components/InputComponent.h>
 
-// Define menu widget indexes
-#define MENU_MAIN_INDEX 0
-#define MENU_JOIN_INDEX 1
-
 void UMainMenu::SetMenuInterface(IMenuInterface* MenuInterface)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Set interface called"));
@@ -60,9 +56,11 @@ bool UMainMenu::Initialize()
 	if(!ensure(BtnHost)){ return false; }
 	BtnHost->OnClicked.AddDynamic(this, &UMainMenu::HostClicked);
 	if (!ensure(BtnJoin)) { return false; }
-	BtnJoin->OnClicked.AddDynamic(this, &UMainMenu::JoinClickedMain);
+	BtnJoin->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
 	if (!ensure(BtnJoinWithAddr)) { return false; }
 	BtnJoinWithAddr->OnClicked.AddDynamic(this, &UMainMenu::JoinClickedWithAddress);
+	if(!ensure(BtnBack)){ return false; }
+	BtnBack->OnClicked.AddDynamic(this, &UMainMenu::BackToMainMenu);
 
 	UE_LOG(LogTemp, Warning, TEXT("Initilize called"));
 	return true;
@@ -78,11 +76,12 @@ void UMainMenu::HostClicked()
 	}
 }
 
-void UMainMenu::JoinClickedMain()
+void UMainMenu::OpenJoinMenu()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Join clicked"));
+	UE_LOG(LogTemp, Warning, TEXT("Open Join Menu"));
 	if (!ensure(MenuWidgetSwitcher)) { return; }
-	MenuWidgetSwitcher->SetActiveWidgetIndex(MENU_JOIN_INDEX);
+	if(!ensure(JoinMenu)){ return; }
+	MenuWidgetSwitcher->SetActiveWidget(JoinMenu);
 
 	if (!ensure(IPAddressTextBox)) { return; }
 	IPAddressTextBox->SetKeyboardFocus();
@@ -98,4 +97,11 @@ void UMainMenu::JoinClickedWithAddress()
 		UE_LOG(LogTemp, Warning, TEXT("yeah interface"));
 		MenuInterface->Join(IPAdress);
 	}
+}
+
+void UMainMenu::BackToMainMenu()
+{
+	if (!ensure(MenuWidgetSwitcher)) { return; }
+	if (!ensure(MainMenu)) { return; }
+	MenuWidgetSwitcher->SetActiveWidget(MainMenu);
 }
