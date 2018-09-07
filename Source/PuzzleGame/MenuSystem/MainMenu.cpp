@@ -28,6 +28,8 @@ bool UMainMenu::Initialize()
 	BtnJoinWithAddr->OnClicked.AddDynamic(this, &UMainMenu::JoinClickedWithAddress);
 	if(!ensure(BtnBack)){ return false; }
 	BtnBack->OnClicked.AddDynamic(this, &UMainMenu::BackToMainMenu);
+	if (!ensure(BtnQuit)) { return false; }
+	BtnQuit->OnClicked.AddDynamic(this, &UMainMenu::QuitClicked);
 
 	UE_LOG(LogTemp, Warning, TEXT("Initilize called"));
 	return true;
@@ -71,4 +73,14 @@ void UMainMenu::BackToMainMenu()
 	if (!ensure(MenuWidgetSwitcher)) { return; }
 	if (!ensure(MainMenu)) { return; }
 	MenuWidgetSwitcher->SetActiveWidget(MainMenu);
+}
+
+void UMainMenu::QuitClicked()
+{
+	UWorld* World = GetWorld();
+	if (!ensure(World)) { return; }
+	APlayerController* PC = World->GetFirstPlayerController();
+	if (!ensure(PC)) { return; }
+
+	PC->ConsoleCommand("Quit");
 }

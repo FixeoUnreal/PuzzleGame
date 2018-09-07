@@ -38,6 +38,9 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* BtnBack;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* BtnQuit;
 	
 	UPROPERTY(meta = (BindWidget))
 	UWidgetSwitcher* MenuWidgetSwitcher;
@@ -65,4 +68,7 @@ protected:
 
 	UFUNCTION()
 	void BackToMainMenu();
+
+	UFUNCTION()
+	void QuitClicked();
 };
