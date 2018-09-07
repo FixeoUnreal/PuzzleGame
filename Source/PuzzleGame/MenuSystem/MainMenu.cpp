@@ -90,7 +90,7 @@ void UMainMenu::OpenJoinMenu()
 void UMainMenu::JoinClickedWithAddress()
 {
 	if(!ensure(IPAddressTextBox)){ return; }
-	FString IPAdress = IPAddressTextBox->GetText().ToString();
+	const FString& IPAdress = IPAddressTextBox->GetText().ToString();
 
 	if (MenuInterface)
 	{

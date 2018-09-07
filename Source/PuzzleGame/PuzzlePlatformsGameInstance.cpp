@@ -41,7 +41,7 @@ void UPuzzlePlatformsGameInstance::Host()
 	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
 }
 
-void UPuzzlePlatformsGameInstance::Join(const FString Address)
+void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 {
 	UEngine* Engine = GetEngine();
 	if (!ensure(Engine)) { return; }

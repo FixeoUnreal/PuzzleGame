@@ -26,7 +26,7 @@ public:
 	virtual void Host() override;
 
 	UFUNCTION(Exec)
-	virtual void Join(const FString Address) override;
+	virtual void Join(const FString& Address) override;
 
 	UFUNCTION(BlueprintCallable, Category = "PPGameInstance")
 	void LoadMenu();
