@@ -3,18 +3,42 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "MenuWidget.h"
 #include "MenuInGame.generated.h"
+
+class UButton;
+class IMenuInterface;
 
 /**
  * 
  */
 UCLASS()
-class PUZZLEGAME_API UMenuInGame : public UUserWidget
+class PUZZLEGAME_API UMenuInGame : public UMenuWidget
 {
 	GENERATED_BODY()
+
+public:
+	virtual void Setup() override;
 	
+protected:
+	UPROPERTY(meta = (BindWidget))
+	UButton* BtnResume;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* BtnQuit;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* BtnMainMenu;
+
+protected:
+	virtual bool Initialize() override;
 	
-	
-	
+	UFUNCTION()
+	void ResumeClicked();
+
+	UFUNCTION()
+	void QuitClicked();
+
+	UFUNCTION()
+	void MainMenuClicked();
 };

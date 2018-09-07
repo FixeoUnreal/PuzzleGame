@@ -7,25 +7,26 @@
 #include "PlatformTrigger.h"
 #include "Blueprint/UserWidget.h"
 #include "MenuSystem/MainMenu.h"
+#include "MenuSystem/MenuInGame.h"
+#include "MenuSystem/MenuWidget.h"
 
 
 
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectInitializer)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Gameinstance constructed"));
-
 	ConstructorHelpers::FClassFinder<UUserWidget> MainMenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
 	if(!ensure(MainMenuBPClass.Class)){ return; }
+	MainMenuClass = MainMenuBPClass.Class;
 
-	MenuClass = MainMenuBPClass.Class;
-	UE_LOG(LogTemp, Warning, TEXT("Found class: %s"), *MenuClass->GetName());
+	ConstructorHelpers::FClassFinder<UUserWidget> InGameMenuBPClass(TEXT("/Game/MenuSystem/WBP_MenuInGame"));
+	if (!ensure(InGameMenuBPClass.Class)) { return; }
+	InGameMenuClass = InGameMenuBPClass.Class;
 }
 
 void UPuzzlePlatformsGameInstance::Init()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Gameinstance init"));
-	UE_LOG(LogTemp, Warning, TEXT("Found class: %s"), *MenuClass->GetName());
+	
 }
 
 void UPuzzlePlatformsGameInstance::Host()
@@ -54,14 +55,27 @@ void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 	PC->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 }
 
-void UPuzzlePlatformsGameInstance::LoadMenu()
+void UPuzzlePlatformsGameInstance::OpenMainMenu()
 {
-	if(!ensure(MenuClass)){ return; }
-	UMainMenu* Menu = CreateWidget<UMainMenu>(this, MenuClass);
-	if(!ensure(Menu)){ return; }
+	APlayerController* PC = GetFirstLocalPlayerController();
+	if (!ensure(PC)) { return; }
+	PC->ClientTravel("/Game/MenuSystem/MainMenu", ETravelType::TRAVEL_Absolute);
+}
 
-	Menu->Setup();
+void UPuzzlePlatformsGameInstance::LoadMenu(TSubclassOf<UMenuWidget> MenuClass)
+{
+	if (!ensure(MenuClass)) { return; }
+	CurrentMenu = CreateWidget<UMenuWidget>(this, MenuClass);
+	if (!ensure(CurrentMenu)) { return; }
 
-	Menu->SetMenuInterface(this);
+	CurrentMenu->Setup();
+
+	CurrentMenu->SetMenuInterface(this);
+}
+
+void UPuzzlePlatformsGameInstance::ExitMenu()
+{
+	if(!ensure(CurrentMenu)){ return; }
+	CurrentMenu->TearDown();
 }
 

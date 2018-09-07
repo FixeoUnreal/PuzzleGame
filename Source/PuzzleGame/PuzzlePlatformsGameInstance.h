@@ -28,10 +28,19 @@ public:
 	UFUNCTION(Exec)
 	virtual void Join(const FString& Address) override;
 
+	UFUNCTION(Exec)
+	void OpenMainMenu() override;
+
 	UFUNCTION(BlueprintCallable, Category = "PPGameInstance")
-	void LoadMenu();
+	void LoadMenu(TSubclassOf<UMenuWidget> MenuClass);
+
+	UFUNCTION(BlueprintCallable, Category = "PPGameInstance")
+	void ExitMenu();
 
 private:
-	TSubclassOf<UUserWidget> MenuClass;
+	TSubclassOf<UUserWidget> MainMenuClass;
 
+	TSubclassOf<UUserWidget> InGameMenuClass;
+
+	UMenuWidget* CurrentMenu;
 };
