@@ -32,7 +32,7 @@ public:
 	void OpenMainMenu() override;
 
 	UFUNCTION(BlueprintCallable, Category = "PPGameInstance")
-	void LoadMenu(TSubclassOf<UMenuWidget> MenuClass);
+	void LoadMenuWidget(TSubclassOf<UMenuWidget> MenuClass);
 
 	UFUNCTION(BlueprintCallable, Category = "PPGameInstance")
 	void ExitMenu();

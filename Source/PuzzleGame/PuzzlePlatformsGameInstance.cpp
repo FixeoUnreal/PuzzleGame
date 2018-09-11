@@ -9,7 +9,7 @@
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/MenuInGame.h"
 #include "MenuSystem/MenuWidget.h"
-
+#include "OnlineSubsystem.h"
 
 
 
@@ -26,7 +26,10 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 
 void UPuzzlePlatformsGameInstance::Init()
 {
-	
+	UE_LOG(LogTemp, Warning, TEXT("Init..."));
+	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
+	if(!ensure(OnlineSubsystem)){ return; }
+	UE_LOG(LogTemp, Warning, TEXT("Subsystem: %s"), *OnlineSubsystem->GetSubsystemName().ToString());
 }
 
 void UPuzzlePlatformsGameInstance::Host()
@@ -62,7 +65,7 @@ void UPuzzlePlatformsGameInstance::OpenMainMenu()
 	PC->ClientTravel("/Game/MenuSystem/MainMenu", ETravelType::TRAVEL_Absolute);
 }
 
-void UPuzzlePlatformsGameInstance::LoadMenu(TSubclassOf<UMenuWidget> MenuClass)
+void UPuzzlePlatformsGameInstance::LoadMenuWidget(TSubclassOf<UMenuWidget> MenuClass)
 {
 	if (!ensure(MenuClass)) { return; }
 	CurrentMenu = CreateWidget<UMenuWidget>(this, MenuClass);
