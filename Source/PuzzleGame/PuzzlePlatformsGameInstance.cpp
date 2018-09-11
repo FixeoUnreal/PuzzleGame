@@ -16,7 +16,7 @@
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectInitializer)
 {
 	ConstructorHelpers::FClassFinder<UUserWidget> MainMenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
-	if(!ensure(MainMenuBPClass.Class)){ return; }
+	if (!ensure(MainMenuBPClass.Class)) { return; }
 	MainMenuClass = MainMenuBPClass.Class;
 
 	ConstructorHelpers::FClassFinder<UUserWidget> InGameMenuBPClass(TEXT("/Game/MenuSystem/WBP_MenuInGame"));
@@ -28,20 +28,33 @@ void UPuzzlePlatformsGameInstance::Init()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Init..."));
 	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
-	if(!ensure(OnlineSubsystem)){ return; }
-	UE_LOG(LogTemp, Warning, TEXT("Subsystem: %s"), *OnlineSubsystem->GetSubsystemName().ToString());
+	if (OnlineSubsystem)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Subsystem: %s"), *OnlineSubsystem->GetSubsystemName().ToString());
+		IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
+		if (SessionInterface.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Subsystem session interface found"));
+		}
+		
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No OnlineSubsystem found!"));
+	}
+
 }
 
 void UPuzzlePlatformsGameInstance::Host()
 {
 	UEngine* Engine = GetEngine();
-	if(!ensure(Engine)){ return; }
+	if (!ensure(Engine)) { return; }
 
 	Engine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, TEXT("Hosting"));
 
 	UWorld* World = GetWorld();
-	if(!ensure(World)){ return; }
-	
+	if (!ensure(World)) { return; }
+
 	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
 }
 
@@ -53,7 +66,7 @@ void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 	Engine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, FString::Printf(TEXT("Joining %s"), *Address));
 
 	APlayerController* PC = GetFirstLocalPlayerController();
-	if(!ensure(PC)){ return; }
+	if (!ensure(PC)) { return; }
 
 	PC->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 }
@@ -78,7 +91,7 @@ void UPuzzlePlatformsGameInstance::LoadMenuWidget(TSubclassOf<UMenuWidget> MenuC
 
 void UPuzzlePlatformsGameInstance::ExitMenu()
 {
-	if(!ensure(CurrentMenu)){ return; }
+	if (!ensure(CurrentMenu)) { return; }
 	CurrentMenu->TearDown();
 }
 
