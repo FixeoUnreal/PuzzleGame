@@ -2,6 +2,8 @@
 
 #include "PuzzlePlatformsGameInstance.h"
 #include <Engine/Engine.h>
+#include <OnlineSessionSettings.h>
+#include <OnlineSessionInterface.h>
 #include <GameFramework/PlayerController.h>
 #include <ConstructorHelpers.h>
 #include "PlatformTrigger.h"
@@ -9,7 +11,7 @@
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/MenuInGame.h"
 #include "MenuSystem/MenuWidget.h"
-#include "OnlineSubsystem.h"
+
 
 
 
@@ -31,12 +33,11 @@ void UPuzzlePlatformsGameInstance::Init()
 	if (OnlineSubsystem)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Subsystem: %s"), *OnlineSubsystem->GetSubsystemName().ToString());
-		IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
+		SessionInterface = OnlineSubsystem->GetSessionInterface();
 		if (SessionInterface.IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Subsystem session interface found"));
+			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnSessionCreationCompleted);
 		}
-		
 	}
 	else
 	{
@@ -47,15 +48,11 @@ void UPuzzlePlatformsGameInstance::Init()
 
 void UPuzzlePlatformsGameInstance::Host()
 {
-	UEngine* Engine = GetEngine();
-	if (!ensure(Engine)) { return; }
-
-	Engine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, TEXT("Hosting"));
-
-	UWorld* World = GetWorld();
-	if (!ensure(World)) { return; }
-
-	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+	if (SessionInterface.IsValid())
+	{
+		FOnlineSessionSettings SessionSettings;
+		SessionInterface->CreateSession(0, TEXT("My Session Game"), SessionSettings);
+	}
 }
 
 void UPuzzlePlatformsGameInstance::Join(const FString& Address)
@@ -93,5 +90,34 @@ void UPuzzlePlatformsGameInstance::ExitMenu()
 {
 	if (!ensure(CurrentMenu)) { return; }
 	CurrentMenu->TearDown();
+}
+
+void UPuzzlePlatformsGameInstance::OnSessionCreationCompleted(FName SessionName, bool Success)
+{
+	UE_LOG(LogTemp, Warning, TEXT("On creation completed"));
+	if (Success)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Creation succeeded"));
+		StartHostSession(SessionName);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Can not create session"));
+	}
+}
+
+void UPuzzlePlatformsGameInstance::StartHostSession(FName SessionName)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Enter Start Session"));
+	UEngine* Engine = GetEngine();
+	if (!ensure(Engine)) { return; }
+
+	Engine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, TEXT("Hosting " + SessionName.ToString()));
+
+	UWorld* World = GetWorld();
+	if (!ensure(World)) { return; }
+
+	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+
 }
 

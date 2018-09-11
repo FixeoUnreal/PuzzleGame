@@ -5,9 +5,12 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "MenuSystem/MenuInterface.h"
+#include "OnlineSubsystem.h"
 #include "PuzzlePlatformsGameInstance.generated.h"
 
 class UUserWidget;
+class IOnlineSubsystem;
+
 
 /**
  * 
@@ -37,10 +40,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PPGameInstance")
 	void ExitMenu();
 
+protected:
+	void OnSessionCreationCompleted(FName SessionName, bool Success);
+
+	void StartHostSession(FName SessionName);
+
 private:
 	TSubclassOf<UUserWidget> MainMenuClass;
 
 	TSubclassOf<UUserWidget> InGameMenuClass;
 
 	UMenuWidget* CurrentMenu;
+
+	IOnlineSessionPtr SessionInterface;
 };
