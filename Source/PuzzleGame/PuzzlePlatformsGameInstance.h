@@ -10,6 +10,7 @@
 
 class UUserWidget;
 class IOnlineSubsystem;
+class FOnlineSessionSearch;
 
 
 /**
@@ -47,6 +48,8 @@ protected:
 
 	void OnDestroySessionCompleted(FName SessionName, bool Success);
 
+	void OnFindSessionsCompleted(bool bWasSuccessful);
+
 	void CreateSession();
 
 
@@ -58,4 +61,6 @@ private:
 	UMenuWidget* CurrentMenu;
 
 	IOnlineSessionPtr SessionInterface;
+
+	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 };
