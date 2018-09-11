@@ -41,9 +41,14 @@ public:
 	void ExitMenu();
 
 protected:
-	void OnSessionCreationCompleted(FName SessionName, bool Success);
+	void OnCreateSessionCompleted(FName SessionName, bool Success);
 
 	void StartHostSession(FName SessionName);
+
+	void OnDestroySessionCompleted(FName SessionName, bool Success);
+
+	void CreateSession();
+
 
 private:
 	TSubclassOf<UUserWidget> MainMenuClass;

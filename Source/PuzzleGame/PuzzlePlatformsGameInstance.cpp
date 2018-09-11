@@ -13,7 +13,7 @@
 #include "MenuSystem/MenuWidget.h"
 
 
-
+const static FName SESSION_NAME = TEXT("My Session Game");
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectInitializer)
 {
@@ -36,7 +36,8 @@ void UPuzzlePlatformsGameInstance::Init()
 		SessionInterface = OnlineSubsystem->GetSessionInterface();
 		if (SessionInterface.IsValid())
 		{
-			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnSessionCreationCompleted);
+			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnCreateSessionCompleted);
+			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnDestroySessionCompleted);
 		}
 	}
 	else
@@ -50,10 +51,24 @@ void UPuzzlePlatformsGameInstance::Host()
 {
 	if (SessionInterface.IsValid())
 	{
-		FOnlineSessionSettings SessionSettings;
-		SessionInterface->CreateSession(0, TEXT("My Session Game"), SessionSettings);
+		auto ExistingSession = SessionInterface->GetNamedSession(SESSION_NAME);
+		if (ExistingSession)
+		{
+			SessionInterface->DestroySession(SESSION_NAME);
+		}
+		else
+		{
+			CreateSession();
+		}
 	}
 }
+
+void UPuzzlePlatformsGameInstance::CreateSession()
+{
+	FOnlineSessionSettings SessionSettings;
+	SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
+}
+
 
 void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 {
@@ -92,7 +107,7 @@ void UPuzzlePlatformsGameInstance::ExitMenu()
 	CurrentMenu->TearDown();
 }
 
-void UPuzzlePlatformsGameInstance::OnSessionCreationCompleted(FName SessionName, bool Success)
+void UPuzzlePlatformsGameInstance::OnCreateSessionCompleted(FName SessionName, bool Success)
 {
 	UE_LOG(LogTemp, Warning, TEXT("On creation completed"));
 	if (Success)
@@ -119,5 +134,13 @@ void UPuzzlePlatformsGameInstance::StartHostSession(FName SessionName)
 
 	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
 
+}
+
+void UPuzzlePlatformsGameInstance::OnDestroySessionCompleted(FName SessionName, bool Success)
+{
+	if (Success)
+	{
+		CreateSession();
+	}
 }
 
