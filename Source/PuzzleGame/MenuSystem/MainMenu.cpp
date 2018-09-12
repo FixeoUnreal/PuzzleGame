@@ -4,8 +4,19 @@
 #include "Components/Button.h"
 #include "MenuInterface.h"
 #include <WidgetSwitcher.h>
-#include <EditableTextBox.h>
 #include <Components/InputComponent.h>
+#include <ScrollBox.h>
+#include <ConstructorHelpers.h>
+#include <TextBlock.h>
+#include "MenuSystem/ServerRow.h"
+
+
+UMainMenu::UMainMenu(const FObjectInitializer & ObjectInitializer)
+{
+	ConstructorHelpers::FClassFinder<UUserWidget> ServerRowBPClass(TEXT("/Game/MenuSystem/WBP_ServerRow"));
+	if (!ensure(ServerRowBPClass.Class)) { return; }
+	ServerRowClass = ServerRowBPClass.Class;
+}
 
 void UMainMenu::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
 {
@@ -51,20 +62,17 @@ void UMainMenu::OpenJoinMenu()
 	if (!ensure(MenuWidgetSwitcher)) { return; }
 	if(!ensure(JoinMenu)){ return; }
 	MenuWidgetSwitcher->SetActiveWidget(JoinMenu);
-
-	if (!ensure(IPAddressTextBox)) { return; }
-	IPAddressTextBox->SetKeyboardFocus();
 }
 
 void UMainMenu::JoinClickedWithAddress()
 {
-	if(!ensure(IPAddressTextBox)){ return; }
-	const FString& IPAdress = IPAddressTextBox->GetText().ToString();
-
-	if (MenuInterface)
+	if (MenuInterface && ServerScrollBox)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("yeah interface"));
-		MenuInterface->Join(IPAdress);
+		if (!ensure(ServerRowClass)) { return; }
+		UServerRow* ServerRow = CreateWidget<UServerRow>(this, ServerRowClass);
+		if (!ensure(ServerRow)) { return; }
+		ServerRow->SetServerNameText("Rowwwwwwwwww");
+		ServerScrollBox->AddChild(ServerRow);
 	}
 }
 

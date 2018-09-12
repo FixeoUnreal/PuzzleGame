@@ -88,7 +88,7 @@ void UPuzzlePlatformsGameInstance::CreateSession()
 
 void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 {
-	UEngine* Engine = GetEngine();
+	/*UEngine* Engine = GetEngine();
 	if (!ensure(Engine)) { return; }
 
 	Engine->AddOnScreenDebugMessage(0, 2.f, FColor::Green, FString::Printf(TEXT("Joining %s"), *Address));
@@ -96,7 +96,7 @@ void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 	APlayerController* PC = GetFirstLocalPlayerController();
 	if (!ensure(PC)) { return; }
 
-	PC->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
+	PC->ClientTravel(Address, ETravelType::TRAVEL_Absolute);*/
 }
 
 void UPuzzlePlatformsGameInstance::OpenMainMenu()

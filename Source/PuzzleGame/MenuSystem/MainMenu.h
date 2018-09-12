@@ -14,6 +14,8 @@ class UWidgetSwitcher;
 class UEditableTextBox;
 class UInputComponent;
 class UWidget;
+class UUserWidget;
+class FObjectInitializer;
 
 /**
  * 
@@ -24,8 +26,10 @@ class PUZZLEGAME_API UMainMenu : public UMenuWidget
 	GENERATED_BODY()
 
 public:
+	UMainMenu(const FObjectInitializer & ObjectInitializer);
+
 	virtual void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) override;
-	
+
 protected:
 	UPROPERTY(meta = (BindWidget))
 	UButton* BtnHost;
@@ -52,7 +56,7 @@ protected:
 	UWidget* MainMenu;
 
 	UPROPERTY(meta = (BindWidget))
-	UEditableTextBox* IPAddressTextBox;
+	class UScrollBox* ServerScrollBox;
 
 protected:
 	virtual bool Initialize() override;
@@ -71,4 +75,7 @@ protected:
 
 	UFUNCTION()
 	void QuitClicked();
+
+private:
+	TSubclassOf<UUserWidget> ServerRowClass;
 };
