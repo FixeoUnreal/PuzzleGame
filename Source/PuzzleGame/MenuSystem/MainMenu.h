@@ -33,6 +33,8 @@ public:
 
 	void SetServerList(TArray<FOnlineSessionSearchResult> ServerList);
 
+	void SelectIndex(uint32 Index);
+
 protected:
 	UPROPERTY(meta = (BindWidget))
 	UButton* BtnHost;
@@ -61,6 +63,8 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UScrollBox* ServerScrollBox;
 
+	TOptional<uint32> SelectedIndex;
+
 protected:
 	virtual bool Initialize() override;
 
@@ -83,5 +87,5 @@ private:
 	TSubclassOf<UUserWidget> ServerRowClass;
 
 private:
-	void AddServerRow(const FString& DisplayStr);
+	void AddServerRow(const FString& DisplayStr, uint32 Index);
 };
