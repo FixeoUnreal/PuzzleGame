@@ -16,6 +16,7 @@ class UInputComponent;
 class UWidget;
 class UUserWidget;
 class FObjectInitializer;
+class FOnlineSessionSearchResult;
 
 /**
  * 
@@ -29,6 +30,8 @@ public:
 	UMainMenu(const FObjectInitializer & ObjectInitializer);
 
 	virtual void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) override;
+
+	void SetServerList(TArray<FOnlineSessionSearchResult> ServerList);
 
 protected:
 	UPROPERTY(meta = (BindWidget))
@@ -78,4 +81,7 @@ protected:
 
 private:
 	TSubclassOf<UUserWidget> ServerRowClass;
+
+private:
+	void AddServerRow(const FString& DisplayStr);
 };

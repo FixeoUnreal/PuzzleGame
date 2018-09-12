@@ -35,6 +35,8 @@ public:
 	UFUNCTION(Exec)
 	void OpenMainMenu() override;
 
+	virtual void RefreshServerList() override;
+
 	UFUNCTION(BlueprintCallable, Category = "PPGameInstance")
 	void LoadMenuWidget(TSubclassOf<UMenuWidget> MenuClass);
 

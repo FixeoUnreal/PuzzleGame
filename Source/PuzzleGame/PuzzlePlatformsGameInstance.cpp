@@ -38,17 +38,8 @@ void UPuzzlePlatformsGameInstance::Init()
 		{
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnCreateSessionCompleted);
 			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnDestroySessionCompleted);
-		
-			SessionSearch = MakeShareable(new FOnlineSessionSearch());
-			if (SessionSearch.IsValid())
-			{
-				SessionSearch->bIsLanQuery = true;
-				SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
-				SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnFindSessionsCompleted);
-				UE_LOG(LogTemp, Warning, TEXT("Start find sessions"));
-			}
 		}
-			
+
 	}
 	else
 	{
@@ -104,6 +95,19 @@ void UPuzzlePlatformsGameInstance::OpenMainMenu()
 	APlayerController* PC = GetFirstLocalPlayerController();
 	if (!ensure(PC)) { return; }
 	PC->ClientTravel("/Game/MenuSystem/MainMenu", ETravelType::TRAVEL_Absolute);
+}
+
+void UPuzzlePlatformsGameInstance::RefreshServerList()
+{
+	if(!SessionInterface.IsValid()){ return; }
+	SessionSearch = MakeShareable(new FOnlineSessionSearch());
+	if (SessionSearch.IsValid())
+	{
+		SessionSearch->bIsLanQuery = true;
+		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+		SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnFindSessionsCompleted);
+		UE_LOG(LogTemp, Warning, TEXT("Start find sessions"));
+	}
 }
 
 void UPuzzlePlatformsGameInstance::LoadMenuWidget(TSubclassOf<UMenuWidget> MenuClass)
@@ -167,15 +171,11 @@ void UPuzzlePlatformsGameInstance::OnFindSessionsCompleted(bool bWasSuccessful)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Find sessions successful"));
 		TArray<FOnlineSessionSearchResult> Results = SessionSearch->SearchResults;
-		if (Results.Num() <= 0)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("No result found!"));
-			return;
-		}
-		for (FOnlineSessionSearchResult& Result : Results)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Result: %s"), *Result.GetSessionIdStr());
-		}
+		
+		if(!ensure(CurrentMenu)){ return; }
+		UMainMenu* MainMenu = Cast<UMainMenu>(CurrentMenu);
+		if(!ensure(MainMenu)){ return; }
+		MainMenu->SetServerList(Results);
 	}
 }
 

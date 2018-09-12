@@ -9,7 +9,10 @@
 #include <ConstructorHelpers.h>
 #include <TextBlock.h>
 #include "MenuSystem/ServerRow.h"
+#include <OnlineSessionSettings.h>
 
+const FString& SEARCH_WAITING_TEXT = TEXT("Searching for servers...");
+const FString& SEARCH_NOT_FOUND_TEXT = TEXT("No server found!");
 
 UMainMenu::UMainMenu(const FObjectInitializer & ObjectInitializer)
 {
@@ -25,19 +28,36 @@ void UMainMenu::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
 	TearDown();
 }
 
+void UMainMenu::SetServerList(TArray<FOnlineSessionSearchResult> ServerList)
+{
+	if (!ensure(ServerScrollBox)) { return; }
+
+	ServerScrollBox->ClearChildren();
+
+	if (ServerList.Num() <= 0)
+	{
+		AddServerRow(SEARCH_NOT_FOUND_TEXT);
+	}
+
+	for (FOnlineSessionSearchResult& ServerResult : ServerList)
+	{
+		AddServerRow(ServerResult.GetSessionIdStr());
+	}
+}
+
 bool UMainMenu::Initialize()
 {
 	bool Success = Super::Initialize();
-	if(!Success){ return false; }
+	if (!Success) { return false; }
 
 	// Bind onclick events
-	if(!ensure(BtnHost)){ return false; }
+	if (!ensure(BtnHost)) { return false; }
 	BtnHost->OnClicked.AddDynamic(this, &UMainMenu::HostClicked);
 	if (!ensure(BtnJoin)) { return false; }
 	BtnJoin->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
 	if (!ensure(BtnJoinWithAddr)) { return false; }
 	BtnJoinWithAddr->OnClicked.AddDynamic(this, &UMainMenu::JoinClickedWithAddress);
-	if(!ensure(BtnBack)){ return false; }
+	if (!ensure(BtnBack)) { return false; }
 	BtnBack->OnClicked.AddDynamic(this, &UMainMenu::BackToMainMenu);
 	if (!ensure(BtnQuit)) { return false; }
 	BtnQuit->OnClicked.AddDynamic(this, &UMainMenu::QuitClicked);
@@ -60,19 +80,26 @@ void UMainMenu::OpenJoinMenu()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Open Join Menu"));
 	if (!ensure(MenuWidgetSwitcher)) { return; }
-	if(!ensure(JoinMenu)){ return; }
+	if (!ensure(JoinMenu)) { return; }
 	MenuWidgetSwitcher->SetActiveWidget(JoinMenu);
+
+	if (ServerScrollBox)
+	{
+		ServerScrollBox->ClearChildren();
+		AddServerRow(SEARCH_WAITING_TEXT);
+	}
+
+	if (MenuInterface)
+	{
+		MenuInterface->RefreshServerList();
+	}
 }
 
 void UMainMenu::JoinClickedWithAddress()
 {
-	if (MenuInterface && ServerScrollBox)
+	if (MenuInterface)
 	{
-		if (!ensure(ServerRowClass)) { return; }
-		UServerRow* ServerRow = CreateWidget<UServerRow>(this, ServerRowClass);
-		if (!ensure(ServerRow)) { return; }
-		ServerRow->SetServerNameText("Rowwwwwwwwww");
-		ServerScrollBox->AddChild(ServerRow);
+		MenuInterface->Join("TODO");
 	}
 }
 
@@ -91,4 +118,14 @@ void UMainMenu::QuitClicked()
 	if (!ensure(PC)) { return; }
 
 	PC->ConsoleCommand("Quit");
+}
+
+void UMainMenu::AddServerRow(const FString& DisplayStr)
+{
+	if (!ensure(ServerRowClass)) { return; }
+	UServerRow* ServerRow = CreateWidget<UServerRow>(this, ServerRowClass);
+	if (!ensure(ServerRow)) { return; }
+	ServerRow->ServerNameTextBlock->SetText(FText::FromString(DisplayStr));
+	if (!ensure(ServerScrollBox)) { return; }
+	ServerScrollBox->AddChild(ServerRow);
 }

@@ -17,9 +17,6 @@ class PUZZLEGAME_API UServerRow : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void SetServerNameText(const FString& ServerName);
-	
-protected:
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* ServerNameTextBlock;
 	
