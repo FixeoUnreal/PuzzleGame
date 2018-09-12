@@ -103,17 +103,14 @@ void UMainMenu::OpenJoinMenu()
 
 void UMainMenu::JoinClickedWithAddress()
 {
-	if (SelectedIndex.IsSet())
+	if (SelectedIndex.IsSet() && MenuInterface)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Selected Index value: %d"), SelectedIndex.GetValue());
+		MenuInterface->Join(SelectedIndex.GetValue());
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Selected Index not set"));
-	}
-	if (MenuInterface)
-	{
-		MenuInterface->Join("TODO");
 	}
 }
 

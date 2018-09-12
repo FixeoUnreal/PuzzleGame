@@ -6,6 +6,7 @@
 #include "Engine/GameInstance.h"
 #include "MenuSystem/MenuInterface.h"
 #include "OnlineSubsystem.h"
+#include <OnlineSessionInterface.h>
 #include "PuzzlePlatformsGameInstance.generated.h"
 
 class UUserWidget;
@@ -30,7 +31,7 @@ public:
 	virtual void Host() override;
 
 	UFUNCTION(Exec)
-	virtual void Join(const FString& Address) override;
+	virtual void Join(uint32 Index) override;
 
 	UFUNCTION(Exec)
 	void OpenMainMenu() override;
@@ -52,6 +53,8 @@ protected:
 
 	void OnFindSessionsCompleted(bool bWasSuccessful);
 
+	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+
 	void CreateSession();
 
 
@@ -65,4 +68,5 @@ private:
 	IOnlineSessionPtr SessionInterface;
 
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
+
 };
