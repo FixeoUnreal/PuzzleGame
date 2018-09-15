@@ -174,7 +174,7 @@ void UPuzzlePlatformsGameInstance::StartHostSession(FName SessionName)
 	UWorld* World = GetWorld();
 	if (!ensure(World)) { return; }
 
-	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+	World->ServerTravel("/Game/Maps/Lobby?listen");
 
 }
 
