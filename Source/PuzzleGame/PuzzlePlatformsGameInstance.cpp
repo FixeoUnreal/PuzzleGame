@@ -13,6 +13,7 @@
 
 
 const static FName SESSION_NAME = TEXT("My Session Game");
+const static FName SESSION_SETTINGS_KEY_SERVER_NAME = TEXT("ServerName");
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectInitializer)
 {
@@ -48,7 +49,7 @@ void UPuzzlePlatformsGameInstance::Init()
 
 }
 
-void UPuzzlePlatformsGameInstance::Host()
+void UPuzzlePlatformsGameInstance::Host(const FString& Name)
 {
 	if (SessionInterface.IsValid())
 	{
@@ -60,6 +61,7 @@ void UPuzzlePlatformsGameInstance::Host()
 		}
 		else
 		{
+			DesiredServerName = Name;
 			CreateSession();
 		}
 	}
@@ -81,6 +83,7 @@ void UPuzzlePlatformsGameInstance::CreateSession()
 		SessionSettings.NumPublicConnections = 2;
 		SessionSettings.bShouldAdvertise = true;
 		SessionSettings.bUsesPresence = true;
+		SessionSettings.Set(SESSION_SETTINGS_KEY_SERVER_NAME, DesiredServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 		SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 	}
@@ -201,10 +204,19 @@ void UPuzzlePlatformsGameInstance::OnFindSessionsCompleted(bool bWasSuccessful)
 		for (const FOnlineSessionSearchResult& Result : SessionSearch->SearchResults)
 		{
 			FServerData Data;
-			Data.Name = Result.GetSessionIdStr();
 			Data.HostUsername = Result.Session.OwningUserName;
 			Data.MaxPlayers = Result.Session.SessionSettings.NumPublicConnections;
 			Data.CurrentPlayers = Data.MaxPlayers - Result.Session.NumOpenPublicConnections;
+			FString ServerName;
+			if (Result.Session.SessionSettings.Get(SESSION_SETTINGS_KEY_SERVER_NAME, ServerName))
+			{
+				Data.Name = ServerName;
+			}
+			else
+			{
+				Data.Name = "Could not find name";
+				UE_LOG(LogTemp, Warning, TEXT("Could not get expected session settings value"));
+			}
 			ServerDataItems.Add(Data);
 		}
 

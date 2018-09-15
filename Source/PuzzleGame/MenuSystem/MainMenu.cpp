@@ -10,6 +10,7 @@
 #include <TextBlock.h>
 #include "MenuSystem/ServerRow.h"
 #include <OnlineSessionSettings.h>
+#include "EditableTextBox.h"
 
 const FString& SEARCH_WAITING_TEXT = TEXT("Searching for servers...");
 const FString& SEARCH_NOT_FOUND_TEXT = TEXT("No server found!");
@@ -74,27 +75,36 @@ bool UMainMenu::Initialize()
 
 	// Bind onclick events
 	if (!ensure(BtnHost)) { return false; }
-	BtnHost->OnClicked.AddDynamic(this, &UMainMenu::HostClicked);
+	BtnHost->OnClicked.AddDynamic(this, &UMainMenu::OpenHostMenu);
+	if (!ensure(BtnHostWithName)) { return false; }
+	BtnHostWithName->OnClicked.AddDynamic(this, &UMainMenu::ConfirmHost);
 	if (!ensure(BtnJoin)) { return false; }
 	BtnJoin->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
 	if (!ensure(BtnJoinWithAddr)) { return false; }
-	BtnJoinWithAddr->OnClicked.AddDynamic(this, &UMainMenu::JoinClickedWithAddress);
-	if (!ensure(BtnBack)) { return false; }
-	BtnBack->OnClicked.AddDynamic(this, &UMainMenu::BackToMainMenu);
+	BtnJoinWithAddr->OnClicked.AddDynamic(this, &UMainMenu::ConfirmJoin);
+	if (!ensure(BtnBackFromJoin)) { return false; }
+	BtnBackFromJoin->OnClicked.AddDynamic(this, &UMainMenu::BackToMainMenu);
+	if (!ensure(BtnBackFromHost)) { return false; }
+	BtnBackFromHost->OnClicked.AddDynamic(this, &UMainMenu::BackToMainMenu);
 	if (!ensure(BtnQuit)) { return false; }
-	BtnQuit->OnClicked.AddDynamic(this, &UMainMenu::QuitClicked);
+	BtnQuit->OnClicked.AddDynamic(this, &UMainMenu::QuitGame);
 
 	UE_LOG(LogTemp, Warning, TEXT("Initilize called"));
 	return true;
 }
 
-void UMainMenu::HostClicked()
+void UMainMenu::OpenHostMenu()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Host clicked"));
-	if (MenuInterface)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("yeah interface"));
-		MenuInterface->Host();
+	if(!ensure(MenuWidgetSwitcher)){ return; }
+	MenuWidgetSwitcher->SetActiveWidget(HostMenu);
+}
+
+void UMainMenu::ConfirmHost()
+{
+	if (MenuInterface && InputHostname)
+	{	
+		MenuInterface->Host(InputHostname->GetText().ToString());
 	}
 }
 
@@ -118,7 +128,7 @@ void UMainMenu::OpenJoinMenu()
 	}
 }
 
-void UMainMenu::JoinClickedWithAddress()
+void UMainMenu::ConfirmJoin()
 {
 	JoinSelectedServer();
 }
@@ -130,7 +140,7 @@ void UMainMenu::BackToMainMenu()
 	MenuWidgetSwitcher->SetActiveWidget(MainMenu);
 }
 
-void UMainMenu::QuitClicked()
+void UMainMenu::QuitGame()
 {
 	UWorld* World = GetWorld();
 	if (!ensure(World)) { return; }

@@ -60,7 +60,13 @@ protected:
 	UButton* BtnJoinWithAddr;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* BtnBack;
+	UButton* BtnHostWithName;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* BtnBackFromJoin;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* BtnBackFromHost;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* BtnQuit;
@@ -75,10 +81,16 @@ protected:
 	UWidget* MainMenu;
 
 	UPROPERTY(meta = (BindWidget))
+	UWidget* HostMenu;
+
+	UPROPERTY(meta = (BindWidget))
 	class UScrollBox* ServerScrollBox;
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* InfoMessage;
+
+	UPROPERTY(meta = (BindWidget))
+	UEditableTextBox* InputHostname;
 	
 	TOptional<uint32> SelectedIndex;
 
@@ -86,19 +98,22 @@ protected:
 	virtual bool Initialize() override;
 
 	UFUNCTION()
-	void HostClicked();
+	void OpenHostMenu();
+
+	UFUNCTION()
+	void ConfirmHost();
 
 	UFUNCTION()
 	void OpenJoinMenu();
 
 	UFUNCTION()
-	void JoinClickedWithAddress();
+	void ConfirmJoin();
 
 	UFUNCTION()
 	void BackToMainMenu();
 
 	UFUNCTION()
-	void QuitClicked();
+	void QuitGame();
 
 private:
 	TSubclassOf<UUserWidget> ServerRowClass;

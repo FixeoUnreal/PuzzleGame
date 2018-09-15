@@ -28,7 +28,7 @@ public:
 	virtual void Init() override;
 
 	UFUNCTION(Exec)
-	virtual void Host() override;
+	virtual void Host(const FString& Name) override;
 
 	UFUNCTION(Exec)
 	virtual void Join(uint32 Index) override;
@@ -70,5 +70,7 @@ private:
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 
 	bool bIsHosting = false;
+
+	FString DesiredServerName;
 
 };
