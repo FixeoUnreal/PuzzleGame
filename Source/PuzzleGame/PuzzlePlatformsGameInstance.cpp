@@ -55,6 +55,7 @@ void UPuzzlePlatformsGameInstance::Host()
 		auto ExistingSession = SessionInterface->GetNamedSession(SESSION_NAME);
 		if (ExistingSession)
 		{
+			bIsHosting = true;
 			SessionInterface->DestroySession(SESSION_NAME);
 		}
 		else
@@ -92,7 +93,8 @@ void UPuzzlePlatformsGameInstance::Join(uint32 Index)
 		auto ExistingSession = SessionInterface->GetNamedSession(SESSION_NAME);
 		if (ExistingSession)
 		{
-			SessionInterface->RemoveNamedSession(SESSION_NAME);
+			SessionInterface->DestroySession(SESSION_NAME);
+			UE_LOG(LogTemp, Warning, TEXT("DEstroy after join called"));
 		}
 	}
 	SessionInterface->JoinSession(0, SESSION_NAME, SessionSearch->SearchResults[Index]);
@@ -171,6 +173,13 @@ void UPuzzlePlatformsGameInstance::OnDestroySessionCompleted(FName SessionName, 
 	if (Success)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnDestroySession success"));
+
+		// Client won't create a new session after leaving sessions
+		if(bIsHosting){
+			bIsHosting = false;
+			return; 
+		}
+
 		CreateSession();
 	}
 }

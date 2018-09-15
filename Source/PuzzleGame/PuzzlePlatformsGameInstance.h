@@ -69,4 +69,6 @@ private:
 
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 
+	bool bIsHosting = false;
+
 };

@@ -37,6 +37,7 @@ void UMainMenu::SetServerList(TArray<FOnlineSessionSearchResult> ServerList)
 	if (ServerList.Num() <= 0)
 	{
 		AddServerRow(SEARCH_NOT_FOUND_TEXT, 0);
+		AddServerRow(TEXT("Test1"), 1);
 	}
 
 	uint32 i = 0;
@@ -49,6 +50,20 @@ void UMainMenu::SetServerList(TArray<FOnlineSessionSearchResult> ServerList)
 void UMainMenu::SelectIndex(uint32 Index)
 {
 	SelectedIndex = Index;
+	UpdateChildren();
+}
+
+void UMainMenu::JoinSelectedServer()
+{
+	if (SelectedIndex.IsSet() && MenuInterface)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Selected Index value: %d"), SelectedIndex.GetValue());
+		MenuInterface->Join(SelectedIndex.GetValue());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Selected Index not set"));
+	}
 }
 
 bool UMainMenu::Initialize()
@@ -103,15 +118,7 @@ void UMainMenu::OpenJoinMenu()
 
 void UMainMenu::JoinClickedWithAddress()
 {
-	if (SelectedIndex.IsSet() && MenuInterface)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Selected Index value: %d"), SelectedIndex.GetValue());
-		MenuInterface->Join(SelectedIndex.GetValue());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Selected Index not set"));
-	}
+	JoinSelectedServer();
 }
 
 void UMainMenu::BackToMainMenu()
@@ -140,4 +147,23 @@ void UMainMenu::AddServerRow(const FString& DisplayStr, uint32 Index)
 	ServerRow->Setup(this, Index);
 	if (!ensure(ServerScrollBox)) { return; }
 	ServerScrollBox->AddChild(ServerRow);
+}
+
+void UMainMenu::UpdateChildren()
+{
+	for (int32 i = 0; i < ServerScrollBox->GetChildrenCount(); ++i)
+	{
+		UServerRow* Row = Cast<UServerRow>(ServerScrollBox->GetChildAt(i));
+		if (Row)
+		{
+			if (Row->GetIndex() == SelectedIndex)
+			{
+				Row->VisualizeRow(true);
+			}
+			else
+			{
+				Row->VisualizeRow(false);
+			}
+		}
+	}
 }

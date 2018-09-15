@@ -35,6 +35,8 @@ public:
 
 	void SelectIndex(uint32 Index);
 
+	void JoinSelectedServer();
+
 protected:
 	UPROPERTY(meta = (BindWidget))
 	UButton* BtnHost;
@@ -88,4 +90,6 @@ private:
 
 private:
 	void AddServerRow(const FString& DisplayStr, uint32 Index);
+
+	void UpdateChildren();
 };
