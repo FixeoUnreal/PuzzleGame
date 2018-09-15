@@ -25,6 +25,11 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* ServerNameTextBlock;
 
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* HostUser;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ConnectionFraction;
 
 public:
 	/**

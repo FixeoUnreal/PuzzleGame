@@ -28,7 +28,7 @@ void UMainMenu::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
 	TearDown();
 }
 
-void UMainMenu::SetServerList(TArray<FOnlineSessionSearchResult> ServerList)
+void UMainMenu::SetServerList(TArray<FServerData> ServerList)
 {
 	if (!ensure(ServerScrollBox)) { return; }
 
@@ -36,14 +36,15 @@ void UMainMenu::SetServerList(TArray<FOnlineSessionSearchResult> ServerList)
 
 	if (ServerList.Num() <= 0)
 	{
-		AddServerRow(SEARCH_NOT_FOUND_TEXT, 0);
-		AddServerRow(TEXT("Test1"), 1);
+		InfoMessage->SetText(FText::FromString(SEARCH_NOT_FOUND_TEXT));
+		return;
 	}
 
 	uint32 i = 0;
-	for (FOnlineSessionSearchResult& ServerResult : ServerList)
+	for (CONST FServerData& Data : ServerList)
 	{
-		AddServerRow(ServerResult.GetSessionIdStr(), i++);
+		InfoMessage->SetText(FText::FromString(""));
+		AddServerRow(Data, i++);
 	}
 }
 
@@ -107,7 +108,8 @@ void UMainMenu::OpenJoinMenu()
 	if (ServerScrollBox)
 	{
 		ServerScrollBox->ClearChildren();
-		AddServerRow(SEARCH_WAITING_TEXT, 0);
+
+		InfoMessage->SetText(FText::FromString(SEARCH_WAITING_TEXT));
 	}
 
 	if (MenuInterface)
@@ -138,13 +140,18 @@ void UMainMenu::QuitClicked()
 	PC->ConsoleCommand("Quit");
 }
 
-void UMainMenu::AddServerRow(const FString& DisplayStr, uint32 Index)
+void UMainMenu::AddServerRow(const FServerData& Data, uint32 Index)
 {
 	if (!ensure(ServerRowClass)) { return; }
 	UServerRow* ServerRow = CreateWidget<UServerRow>(this, ServerRowClass);
 	if (!ensure(ServerRow)) { return; }
-	ServerRow->ServerNameTextBlock->SetText(FText::FromString(DisplayStr));
+
+	ServerRow->ServerNameTextBlock->SetText(FText::FromString(Data.Name));
+	ServerRow->HostUser->SetText(FText::FromString(Data.HostUsername));
+	FString FractionText = FString::Printf(TEXT("%d/%d"), Data.CurrentPlayers, Data.MaxPlayers);
+	ServerRow->ConnectionFraction->SetText(FText::FromString(FractionText));
 	ServerRow->Setup(this, Index);
+
 	if (!ensure(ServerScrollBox)) { return; }
 	ServerScrollBox->AddChild(ServerRow);
 }

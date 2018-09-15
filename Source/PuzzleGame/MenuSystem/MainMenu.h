@@ -17,6 +17,18 @@ class UWidget;
 class UUserWidget;
 class FObjectInitializer;
 class FOnlineSessionSearchResult;
+struct FServerData;
+
+USTRUCT()
+struct FServerData
+{
+	GENERATED_BODY()
+
+	FString Name;
+	uint16 CurrentPlayers;
+	uint16 MaxPlayers;
+	FString HostUsername;
+};
 
 /**
  * 
@@ -31,7 +43,7 @@ public:
 
 	virtual void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) override;
 
-	void SetServerList(TArray<FOnlineSessionSearchResult> ServerList);
+	void SetServerList(TArray<FServerData> ServerList);
 
 	void SelectIndex(uint32 Index);
 
@@ -65,6 +77,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UScrollBox* ServerScrollBox;
 
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* InfoMessage;
+	
 	TOptional<uint32> SelectedIndex;
 
 protected:
@@ -89,7 +104,7 @@ private:
 	TSubclassOf<UUserWidget> ServerRowClass;
 
 private:
-	void AddServerRow(const FString& DisplayStr, uint32 Index);
+	void AddServerRow(const FServerData& DisplayStr, uint32 Index);
 
 	void UpdateChildren();
 };

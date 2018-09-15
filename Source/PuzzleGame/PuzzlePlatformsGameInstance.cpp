@@ -70,7 +70,14 @@ void UPuzzlePlatformsGameInstance::CreateSession()
 	if (SessionInterface.IsValid())
 	{
 		FOnlineSessionSettings SessionSettings;
-		SessionSettings.bIsLANMatch = false;
+		if (IOnlineSubsystem::Get()->GetSubsystemName() == "NULL")
+		{
+			SessionSettings.bIsLANMatch = true;
+		}
+		else
+		{
+			SessionSettings.bIsLANMatch = false;
+		}
 		SessionSettings.NumPublicConnections = 2;
 		SessionSettings.bShouldAdvertise = true;
 		SessionSettings.bUsesPresence = true;
@@ -82,7 +89,7 @@ void UPuzzlePlatformsGameInstance::CreateSession()
 
 void UPuzzlePlatformsGameInstance::Join(uint32 Index)
 {
-	if(!SessionInterface.IsValid() || !SessionSearch.IsValid()){ return; }
+	if (!SessionInterface.IsValid() || !SessionSearch.IsValid()) { return; }
 	if (CurrentMenu)
 	{
 		CurrentMenu->TearDown();
@@ -110,7 +117,7 @@ void UPuzzlePlatformsGameInstance::OpenMainMenu()
 
 void UPuzzlePlatformsGameInstance::RefreshServerList()
 {
-	if(!SessionInterface.IsValid()){ return; }
+	if (!SessionInterface.IsValid()) { return; }
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	if (SessionSearch.IsValid())
 	{
@@ -175,9 +182,9 @@ void UPuzzlePlatformsGameInstance::OnDestroySessionCompleted(FName SessionName, 
 		UE_LOG(LogTemp, Warning, TEXT("OnDestroySession success"));
 
 		// Client won't create a new session after leaving sessions
-		if(bIsHosting){
+		if (bIsHosting) {
 			bIsHosting = false;
-			return; 
+			return;
 		}
 
 		CreateSession();
@@ -190,26 +197,35 @@ void UPuzzlePlatformsGameInstance::OnFindSessionsCompleted(bool bWasSuccessful)
 	if (bWasSuccessful && SessionSearch.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Find sessions successful"));
-		TArray<FOnlineSessionSearchResult> Results = SessionSearch->SearchResults;
-		
-		if(!ensure(CurrentMenu)){ return; }
+		TArray<FServerData> ServerDataItems;
+		for (const FOnlineSessionSearchResult& Result : SessionSearch->SearchResults)
+		{
+			FServerData Data;
+			Data.Name = Result.GetSessionIdStr();
+			Data.HostUsername = Result.Session.OwningUserName;
+			Data.MaxPlayers = Result.Session.SessionSettings.NumPublicConnections;
+			Data.CurrentPlayers = Data.MaxPlayers - Result.Session.NumOpenPublicConnections;
+			ServerDataItems.Add(Data);
+		}
+
+		if (!ensure(CurrentMenu)) { return; }
 		UMainMenu* MainMenu = Cast<UMainMenu>(CurrentMenu);
-		if(!ensure(MainMenu)){ return; }
-		MainMenu->SetServerList(Results);
+		if (!ensure(MainMenu)) { return; }
+		MainMenu->SetServerList(ServerDataItems);
 	}
 }
 
 void UPuzzlePlatformsGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-	if (Result == EOnJoinSessionCompleteResult::Success 
-	&& SessionInterface.IsValid())
+	if (Result == EOnJoinSessionCompleteResult::Success
+		&& SessionInterface.IsValid())
 	{
 		FString ConnectionInfo;
 		bool Succecss = SessionInterface->GetResolvedConnectString(SessionName, ConnectionInfo);
-		if(!Succecss || ConnectionInfo.IsEmpty())
+		if (!Succecss || ConnectionInfo.IsEmpty())
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Could not get connect string!"));
-			return; 
+			return;
 		}
 
 		// Join match
