@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LobbyGameMode.h"
+#include <Engine/World.h>
 
 
 
@@ -9,9 +10,13 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 	PlayerCount++;
-	if (PlayerCount == 3)
+	if (PlayerCount >= 3)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("We have 3 players in da house"));
+		UWorld* World = GetWorld();
+		if (!ensure(World)) { return; }
+
+		bUseSeamlessTravel = true;
+		World->ServerTravel("/Game/Maps/Game?listen");
 	}
 }
 

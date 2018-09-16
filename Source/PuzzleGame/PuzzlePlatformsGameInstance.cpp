@@ -10,6 +10,7 @@
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/MenuInGame.h"
 #include "MenuSystem/MenuWidget.h"
+#include <GameMapsSettings.h>
 
 
 const static FName SESSION_NAME = TEXT("My Session Game");
