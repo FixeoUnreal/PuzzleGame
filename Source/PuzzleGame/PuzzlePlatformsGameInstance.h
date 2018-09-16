@@ -44,6 +44,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PPGameInstance")
 	void ExitMenu();
 
+	void StartSession();
+
 protected:
 	void OnCreateSessionCompleted(FName SessionName, bool Success);
 

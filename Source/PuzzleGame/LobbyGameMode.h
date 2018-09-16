@@ -21,6 +21,7 @@ public:
 
 private:
 	uint32 PlayerCount = 0;
-	
+
+	void StartGame();
 	
 };
